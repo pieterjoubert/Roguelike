@@ -36,16 +36,19 @@ public class Map : MonoBehaviour
     //UI
     public TextMeshProUGUI txtGold;
     public TextMeshProUGUI txtHP;
+    public Camera camera;
 
     TileType[,] dungeon;
     int posX;
     int posZ;
     int gold = 0;
     int hp = 100;
+    bool IsDead = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        
         InitializeDungeon();
         PlaceObstacles(20);
         PlaceEnemies(8);
@@ -60,24 +63,26 @@ public class Map : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Get keyboard movements (W, A, S, D)
-        if (Input.GetKeyDown(KeyCode.W))
+        if (!IsDead)
         {
-            MoveCharacter(Direction.North);
+            //Get keyboard movements (W, A, S, D)
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                MoveCharacter(Direction.North);
+            }
+            else if (Input.GetKeyDown(KeyCode.A))
+            {
+                MoveCharacter(Direction.West);
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                MoveCharacter(Direction.South);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                MoveCharacter(Direction.East);
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            MoveCharacter(Direction.West);
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            MoveCharacter(Direction.South);
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            MoveCharacter(Direction.East);
-        }
-
         txtGold.text = gold.ToString() + "$";
         txtHP.text = hp + " HP";
     }
@@ -143,7 +148,8 @@ public class Map : MonoBehaviour
                         Instantiate(Gold, new Vector3(x, 1.5f, z), Quaternion.identity);
                         break;
                     case TileType.Hero:
-                        Instantiate(Hero, new Vector3(x, 2f, z), Quaternion.identity);
+                        GameObject h = Instantiate(Hero, new Vector3(x, 2f, z), Quaternion.identity);
+
                         break;
                     case TileType.Rat:
                         Instantiate(enemies[0], new Vector3(x, 1f, z), Quaternion.identity);
@@ -264,13 +270,46 @@ public class Map : MonoBehaviour
             Display();
  
         }
-        else if(dungeon[newX,newZ] == TileType.Rat)
+        else if(dungeon[newX,newZ] == TileType.Obstacle)
         {
-            hp -= 5;
-            dungeon[newX, newZ] = TileType.Gold;
+            //Don't move
+        }
+        else //Combat Time!
+        {
+            if (Combat(dungeon[newX, newZ]))
+            {
+                dungeon[newX, newZ] = TileType.Gold;
+            }
+            else
+            {
+                dungeon[posX, posZ] = TileType.OpenSpace;
+                IsDead = true;
+            }
             Display();
  
         }
 
+    }
+
+    public bool Combat(TileType t)
+    {
+       int damage = 0;
+       switch(t)
+       {
+            case TileType.Rat: damage = 5; break;
+            case TileType.Goblin: damage = 10; break;
+            case TileType.Orc: damage = 25; break;
+            case TileType.Dragon: damage = 50; break;
+       }
+        if(hp - damage > 0)
+        {
+            hp -= damage;
+            return true;
+        }
+        else
+        {
+            hp = 0;
+            return false;
+        }
     }
 }

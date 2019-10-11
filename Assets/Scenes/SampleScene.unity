@@ -155,6 +155,7 @@ MonoBehaviour:
   - {fileID: 586166999667746754, guid: 3c08b226d23c4ed43b9618a0e82e6934, type: 3}
   txtGold: {fileID: 1375848353}
   txtHP: {fileID: 2053958833}
+  camera: {fileID: 534669904}
 --- !u!4 &83175905
 Transform:
   m_ObjectHideFlags: 0

@@ -75,12 +75,36 @@ public class Map : MonoBehaviour
     {
         dungeon = new TileType[dungeonSize, dungeonSize];
 
-        for (int i = 0; i < dungeonSize; i++)
+        for (int x = 0; x < dungeonSize; x++)
         {
-            for (int j = 0; j < dungeonSize; j++)
+            for (int z = 0; z < dungeonSize; z++)
             {
-                dungeon[i, j] = TileType.OpenSpace;
+                dungeon[x, z] = TileType.OpenSpace;
             }
+        }
+
+        //North Wall
+        for(int x = 0; x < dungeonSize; x++)
+        {
+            dungeon[x, dungeonSize - 1] = TileType.Obstacle;
+        }
+
+        //South Wall
+        for (int x = 0; x < dungeonSize; x++)
+        {
+            dungeon[x, 0] = TileType.Obstacle;
+        }
+        
+        //East Wall
+        for(int z = 0; z < dungeonSize; z++)
+        {
+            dungeon[dungeonSize - 1, z] = TileType.Obstacle;
+        }
+
+        //West Wall
+        for (int z = 0; z < dungeonSize; z++)
+        {
+            dungeon[0, z] = TileType.Obstacle;
         }
     }
 
@@ -132,8 +156,8 @@ public class Map : MonoBehaviour
     {
         for (int i = 0; i < numObstacles; i++)
         {
-            int x = Random.Range(0, dungeonSize);
-            int z = Random.Range(0, dungeonSize);
+            int x = Random.Range(1, dungeonSize - 1);
+            int z = Random.Range(1, dungeonSize - 1);
             if (dungeon[x, z] == TileType.OpenSpace)
             {
                 dungeon[x, z] = TileType.Obstacle;
@@ -149,8 +173,8 @@ public class Map : MonoBehaviour
     {
         for (int i = 0; i < numCoins; i++)
         {
-            int x = Random.Range(0, dungeonSize);
-            int z = Random.Range(0, dungeonSize);
+            int x = Random.Range(1, dungeonSize - 1);
+            int z = Random.Range(1, dungeonSize - 1);
             if (dungeon[x, z] == TileType.OpenSpace)
             {
                 dungeon[x, z] = TileType.Gold;
@@ -166,8 +190,8 @@ public class Map : MonoBehaviour
     {
         for (int i = 0; i < 1; i++)
         {
-            int x = Random.Range(0, dungeonSize);
-            int z = Random.Range(0, dungeonSize);
+            int x = Random.Range(1, dungeonSize - 1);
+            int z = Random.Range(1, dungeonSize - 1);
             if (dungeon[x, z] == TileType.OpenSpace)
             {
                 dungeon[x, z] = TileType.Hero;
@@ -185,8 +209,8 @@ public class Map : MonoBehaviour
     {
         for (int i = 0; i < numEnemies; i++)
         {
-            int x = Random.Range(0, dungeonSize);
-            int z = Random.Range(0, dungeonSize);
+            int x = Random.Range(1, dungeonSize - 1);
+            int z = Random.Range(1, dungeonSize - 1);
             if (dungeon[x, z] == TileType.OpenSpace)
             {
                 dungeon[x, z] = (TileType)Random.Range(0, 4);
@@ -210,6 +234,7 @@ public class Map : MonoBehaviour
             case Direction.East: newX = posX + 1; break;
             case Direction.West: newX = posX - 1; break;
         }
+
         if(dungeon[newZ,newX] == TileType.OpenSpace)
         {
             dungeon[posX, posZ] = TileType.OpenSpace;

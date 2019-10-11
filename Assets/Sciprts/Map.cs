@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Map : MonoBehaviour
 {
@@ -31,9 +33,15 @@ public class Map : MonoBehaviour
     public GameObject Gold;
     public GameObject[] enemies;
 
+    //UI
+    public TextMeshProUGUI txtGold;
+    public TextMeshProUGUI txtHP;
+
     TileType[,] dungeon;
     int posX;
     int posZ;
+    int gold = 0;
+    int hp = 100;
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +77,9 @@ public class Map : MonoBehaviour
         {
             MoveCharacter(Direction.East);
         }
+
+        txtGold.text = gold.ToString() + "$";
+        txtHP.text = hp + " HP";
     }
 
     public void InitializeDungeon()
@@ -234,8 +245,8 @@ public class Map : MonoBehaviour
             case Direction.East: newX = posX + 1; break;
             case Direction.West: newX = posX - 1; break;
         }
-
-        if(dungeon[newZ,newX] == TileType.OpenSpace)
+        //Debug.Log(dungeon[newX, newZ]);
+        if(dungeon[newX,newZ] == TileType.OpenSpace)
         {
             dungeon[posX, posZ] = TileType.OpenSpace;
             posX = newX;
@@ -243,9 +254,23 @@ public class Map : MonoBehaviour
             dungeon[posX, posZ] = TileType.Hero;
             Display();
         }
-        else
+        else if(dungeon[newX,newZ] == TileType.Gold)
         {
-            
+            gold++;
+            dungeon[posX, posZ] = TileType.OpenSpace;
+            posX = newX;
+            posZ = newZ;
+            dungeon[posX, posZ] = TileType.Hero;
+            Display();
+ 
         }
+        else if(dungeon[newX,newZ] == TileType.Rat)
+        {
+            hp -= 5;
+            dungeon[newX, newZ] = TileType.Gold;
+            Display();
+ 
+        }
+
     }
 }
